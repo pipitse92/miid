@@ -1,0 +1,1101 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GAME BU PIPIT - UBIN HERO MLBB IPS TERPADU</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+    
+    body { 
+      background: #090a0f; 
+      color: #ffffff; 
+      min-height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      overflow-x: hidden; 
+    }
+
+    /* SVG ICON HELPER */
+    .svg-icon {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    /* MODAL ANTI CHEAT */
+    .cheat-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(9, 10, 15, 0.98); z-index: 10000; flex-direction: column;
+      justify-content: center; align-items: center; padding: 25px; text-align: center;
+    }
+    .cheat-box { background: #161224; border: 3px solid #ef4444; border-radius: 20px; padding: 25px; max-width: 420px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
+    .cheat-icon-svg { width: 60px; height: 60px; fill: #ef4444; margin-bottom: 10px; }
+    .cheat-title { color: #ef4444; font-size: 20px; font-weight: 900; margin-bottom: 10px; }
+    .cheat-desc { font-size: 15px; color: #ffffff; margin-bottom: 20px; line-height: 1.5; }
+    .cheat-btn { background: #ef4444; color: #fff; border: none; padding: 12px 25px; border-radius: 20px; font-weight: 900; cursor: pointer; font-size: 16px; }
+
+    /* START SCREEN */
+    .start-screen { 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+      background: radial-gradient(circle, #1a3c26 0%, #090a0f 100%); 
+      z-index: 9998; display: flex; flex-direction: column; 
+      justify-content: center; align-items: center; padding: 20px; text-align: center; 
+    }
+    
+    .start-hero-avatar {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00f0ff, #1e1b4b);
+      border: 4px solid #ffe600;
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 0 25px #00f0ff;
+      margin-bottom: 12px;
+      animation: floatStartHero 2s infinite ease-in-out;
+    }
+
+    .start-hero-avatar svg {
+      width: 50px; height: 50px; fill: #ffe600;
+    }
+
+    @keyframes floatStartHero {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
+    }
+
+    .start-title { color: #ffe600; font-size: 30px; font-weight: 900; margin-bottom: 6px; text-transform: uppercase; text-shadow: 0 0 15px #ffe600; }
+    .start-subtitle { color: #00f0ff; font-size: 16px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
+    
+    .student-form { background: #161224; border: 3px solid #10b981; padding: 22px; border-radius: 18px; width: 100%; max-width: 380px; margin-bottom: 18px; text-align: left; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 14px; color: #ffe600; font-weight: bold; margin-bottom: 6px; }
+    .form-group input { width: 100%; padding: 12px; font-size: 16px; border-radius: 10px; border: 2px solid #10b981; background: #0b0914; color: #fff; outline: none; }
+    
+    /* TOMBOL START GAME ANIMASI KEREN DENGAN SVG */
+    .start-btn { 
+      background: linear-gradient(135deg, #10b981, #00f0ff); 
+      color: #0b0914; 
+      font-size: 22px; 
+      font-weight: 900; 
+      padding: 16px 32px; 
+      border: 3px solid #fff; 
+      border-radius: 40px; 
+      cursor: pointer; 
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.8); 
+      width: 100%; 
+      max-width: 380px; 
+      text-transform: uppercase;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+    .start-btn svg { width: 28px; height: 28px; fill: #0b0914; }
+    .start-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.9);
+    }
+    .start-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* HEADER FIX TOP */
+    .top-header { 
+      background: #161224; 
+      height: 60px; 
+      border-bottom: 3px solid #10b981; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 0 15px; 
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); 
+      position: sticky; top: 0; z-index: 100;
+    }
+    .student-badge { font-size: 13px; color: #00f0ff; font-weight: bold; }
+    .status-group { display: flex; align-items: center; gap: 10px; }
+    .rank-badge { background: linear-gradient(135deg, #10b981, #00f0ff); padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 900; color: #0b0914; border: 1px solid #ffe600; display: flex; align-items: center; gap: 4px; }
+    .score-badge { font-size: 16px; font-weight: 900; color: #ffe600; }
+
+    /* ARENA GAME MAIN */
+    .game-container {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, #1e1b4b, #0f172a);
+      border: 3px solid #00f0ff;
+      border-radius: 18px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+    .hero-avatar-icon {
+      width: 55px; height: 55px;
+      border-radius: 50%;
+      border: 3px solid #ffe600;
+      background: radial-gradient(circle, #00f0ff, #1e1b4b);
+      display: flex; justify-content: center; align-items: center;
+      box-shadow: 0 0 15px #00f0ff;
+      animation: floatHero 2s infinite ease-in-out;
+    }
+    .hero-avatar-icon svg { width: 32px; height: 32px; fill: #ffe600; }
+
+    @keyframes floatHero {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(5deg); }
+    }
+    .hero-speech {
+      flex: 1;
+      background: #0b0914;
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffe600;
+      line-height: 1.3;
+    }
+
+    /* PAPAN UBIN 3D */
+    .tiles-board-wrapper {
+      background: #161224;
+      border: 3px solid #38bdf8;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .grid-board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    /* KOTAK UBIN 3D HERO MLBB */
+    .tile-box {
+      perspective: 1000px;
+      height: 85px;
+      cursor: pointer;
+    }
+
+    .tile-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+
+    .tile-box:hover .tile-front {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 8px 18px rgba(0, 240, 255, 0.5);
+    }
+
+    /* SISI DEPAN UBIN DENGAN IKON HERO VEKTOR SVG */
+    .tile-front {
+      position: absolute;
+      width: 100%; height: 100%;
+      backface-visibility: hidden;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 2px solid #38bdf8;
+      border-bottom: 6px solid #0284c7;
+      border-radius: 14px;
+      display: flex; 
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    }
+
+    .tile-hero-icon-svg {
+      width: 26px;
+      height: 26px;
+      fill: #00f0ff;
+    }
+
+    .tile-num-text {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 8px #00f0ff;
+    }
+
+    /* UBIN SUDAH DIJAWAB BENAR / SALAH */
+    .tile-box.answered-correct .tile-front {
+      background: linear-gradient(145deg, #10b981, #059669) !important;
+      border-color: #fff !important;
+      border-bottom-color: #047857 !important;
+    }
+    .tile-box.answered-correct .tile-hero-icon-svg { fill: #ffffff !important; }
+
+    .tile-box.answered-wrong .tile-front {
+      background: linear-gradient(145deg, #ef4444, #dc2626) !important;
+      border-color: #fff !important;
+      border-bottom-color: #b91c1c !important;
+    }
+    .tile-box.answered-wrong .tile-hero-icon-svg { fill: #ffffff !important; }
+
+    /* POPUP/MODAL SOAL MEMBESAR */
+    .tile-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(9, 10, 15, 0.9);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .tile-modal-overlay.active {
+      display: flex;
+    }
+
+    /* SOAL DENGAN HERO MLBB MEMBESAR */
+    .question-inside-card {
+      background: #161224;
+      border: 4px solid #ffe600;
+      border-radius: 22px;
+      padding: 24px;
+      width: 100%;
+      max-width: 780px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 0 40px rgba(255, 230, 0, 0.5);
+      animation: openBoxZoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes openBoxZoom {
+      0% { opacity: 0; transform: scale(0.1) rotateX(-20deg); }
+      100% { opacity: 1; transform: scale(1) rotateX(0deg); }
+    }
+
+    /* HERO MLBB HEADER DI SOAL MEMBESAR */
+    .q-hero-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #0b0914;
+      border: 2px solid #38bdf8;
+      border-radius: 14px;
+      padding: 10px 15px;
+      margin-bottom: 14px;
+    }
+    .q-hero-badge {
+      background: radial-gradient(circle, #00f0ff, #1e1b4b);
+      border-radius: 50%;
+      width: 50px; height: 50px;
+      display: flex; justify-content: center; align-items: center;
+      border: 2px solid #ffe600;
+    }
+    .q-hero-badge svg { width: 30px; height: 30px; fill: #ffe600; }
+    
+    .q-hero-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffe600;
+      text-transform: uppercase;
+    }
+
+    .timer-bar-container {
+      width: 100%; height: 14px; background: #0b0914; border-radius: 10px; border: 2px solid #332a54; overflow: hidden; margin-bottom: 14px;
+    }
+    .timer-bar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #10b981, #ffe600); transition: width 1s linear; }
+    
+    .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .q-num-text { font-size: 16px; font-weight: 900; color: #00f0ff; text-transform: uppercase; }
+    .q-time-text { font-size: 16px; font-weight: 900; color: #ffe600; }
+
+    /* TEKS SOAL UTUH DAN DIPERBESAR */
+    .q-body-text {
+      font-size: 21px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.5;
+      margin-bottom: 22px;
+      background: #0b0914;
+      padding: 18px;
+      border-radius: 14px;
+      border-left: 6px solid #00f0ff;
+      white-space: pre-line;
+    }
+
+    /* OPSI JAWABAN UBIN 3D DIPERBESAR */
+    .options-list { display: flex; flex-direction: column; gap: 14px; }
+    .option-3d-btn {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 2px solid #38bdf8;
+      border-bottom: 6px solid #0284c7;
+      border-radius: 16px;
+      padding: 18px 22px;
+      color: #ffffff;
+      font-size: 19px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+      box-shadow: 0 5px 14px rgba(0,0,0,0.4);
+    }
+    .option-3d-btn:hover { background: linear-gradient(145deg, #334155, #1e293b); transform: translateY(-2px); }
+    .option-3d-btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+    .option-3d-btn.selected-correct { background: linear-gradient(145deg, #10b981, #059669) !important; border-color: #fff !important; color: #fff !important; }
+    .option-3d-btn.selected-wrong { background: linear-gradient(145deg, #ef4444, #dc2626) !important; border-color: #fff !important; color: #fff !important; }
+
+    /* RESULT SCREEN */
+    .result-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a3c26 0%, #090a0f 100%); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
+    .result-title { font-size: 32px; font-weight: 900; color: #ffe600; margin-bottom: 10px; }
+    .result-score { font-size: 56px; font-weight: 900; color: #00f0ff; text-shadow: 0 0 20px #00f0ff; margin-bottom: 10px; }
+    .result-rank { font-size: 22px; font-weight: 900; color: #10b981; margin-bottom: 15px; background: #161224; padding: 12px 25px; border-radius: 20px; border: 2px solid #10b981; }
+    .save-status { font-size: 14px; color: #00f0ff; margin-bottom: 25px; font-weight: bold; }
+
+    @media (max-width: 600px) {
+      .q-body-text { font-size: 18px; padding: 14px; }
+      .option-3d-btn { font-size: 16px; padding: 14px; }
+      .grid-board { gap: 8px; }
+      .tile-box { height: 70px; }
+      .tile-num-text { font-size: 16px; }
+      .tile-hero-icon-svg { width: 22px; height: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MODAL ANTI CHEAT -->
+  <div class="cheat-modal" id="cheat-modal">
+    <div class="cheat-box">
+      <svg class="cheat-icon-svg" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+      <div class="cheat-title">PERINGATAN KECURANGAN!</div>
+      <div class="cheat-desc">Dilarang membuka tab/aplikasi lain saat ujian berlangsung! Ini peringatan PERTAMA. Jika diulangi, Anda langsung DISKUALIFIKASI dengan SKOR 0!</div>
+      <button class="cheat-btn" onclick="closeCheatModal()">SAYA MENGERTI 🫡</button>
+    </div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="start-screen" id="start-screen">
+    <div class="start-hero-avatar">
+      <!-- SVG CROWN -->
+      <svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+    </div>
+    <div class="start-title">GAME BU PIPIT</div>
+    <div class="start-subtitle">🌟 UBIN HERO MLBB IPS TERPADU (25 SOAL) 🌟</div>
+    
+    <div class="student-form">
+      <div class="form-group">
+        <label for="student-name">Nama Lengkap Murid:</label>
+        <input type="text" id="student-name" placeholder="Ketik nama lengkap..." autocomplete="off">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label for="student-class">Kelas:</label>
+        <input type="text" id="student-class" placeholder="Contoh: VIII.1" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- TOMBOL START GAME GAMBAR ANIMASI VEKTOR SVG KEREN -->
+    <button class="start-btn" onclick="startQuiz()">
+      <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+      <span>START GAME</span>
+    </button>
+  </div>
+
+  <!-- HEADER -->
+  <div class="top-header" id="top-header" style="display:none;">
+    <div class="student-badge" id="display-student">Pemain: -</div>
+    <div class="status-group">
+      <div class="rank-badge" id="rank-badge">WARRIOR</div>
+      <div class="score-badge" id="score-badge">SKOR: 0</div>
+    </div>
+  </div>
+
+  <!-- MAIN GAME AREA -->
+  <div class="game-container" id="game-container" style="display:none;">
+    
+    <div class="hero-banner">
+      <div class="hero-avatar-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="hero-speech" id="hero-speech">Pilih dan klik salah satu Ubin Hero MLBB di bawah ini untuk membuka soal!</div>
+    </div>
+
+    <!-- TAMPILAN BOARD UBIN 1 - 25 HERO MLBB -->
+    <div class="tiles-board-wrapper">
+      <div class="grid-board" id="grid-board">
+        <!-- 25 Ubin di-render via JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POPUP SOAL MEMBESAR SAAT UBIN DIKLIK -->
+  <div class="tile-modal-overlay" id="tile-modal-overlay">
+    <div class="question-inside-card" id="question-card">
+      
+      <!-- MASCOT HERO DI DALAM SOAL MEMBESAR -->
+      <div class="q-hero-header">
+        <div class="q-hero-badge" id="q-hero-icon-container">
+          <!-- SVG Hero Icon di-render JS -->
+        </div>
+        <div class="q-hero-name" id="q-hero-name">HERO MLBB</div>
+      </div>
+
+      <div class="timer-bar-container">
+        <div class="timer-bar-fill" id="timer-bar"></div>
+      </div>
+      <div class="q-meta">
+        <div class="q-num-text" id="q-num-text">SOAL UBIN #1</div>
+        <div class="q-time-text" id="q-time-text">⏱️ SISA WAKTU: 90 DETIK</div>
+      </div>
+      
+      <div class="q-body-text" id="q-body-text">Loading Soal...</div>
+
+      <!-- OPSI JAWABAN DIPERBESAR TANPA ABCD -->
+      <div class="options-list" id="options-list">
+        <!-- Opsi di-render via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="result-screen" id="result-screen">
+    <div class="result-title">MISI SELESAI! 🎉</div>
+    <div class="result-score" id="final-score">0 / 100</div>
+    <div class="result-rank" id="final-rank">RANK: WARRIOR</div>
+    <div class="save-status" id="save-status">⏳ Menyimpan nilai ke Google Sheet...</div>
+    <button class="start-btn" onclick="location.reload()">MAIN LAGI 🔄</button>
+  </div>
+
+  <script>
+    // URL WEB APP GOOGLE APPS SCRIPT SUDAH TERHUBUNG KE SHEET ANDA
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpLcGd0ILVV37_dHZoO1kc344okbLDPtuGqTl2rtesN0U_ZeX1d0ggsvE_ohx3pz6z9w/exec";
+
+    let studentName = "";
+    let studentClass = "";
+    let currentQuestionIdx = -1;
+    let score = 0;
+    let cheatWarnings = 0;
+    let isQuizActive = false;
+    let timerInterval = null;
+    let timeLeft = 0;
+    let maxTimeForQ = 90;
+
+    // SVG PATHS DIJAMIN 100% BEBAS TANDA TANYA DI HP APAPUN
+    const SVG_SWORD = '<svg class="tile-hero-icon-svg" viewBox="0 0 24 24"><path d="M6.92 5c-.32 0-.64.12-.88.37l-1.67 1.67c-.49.49-.49 1.28 0 1.77l5.25 5.25-5.25 5.25c-.25.25-.37.56-.37.88v2.83h2.83c.32 0 .63-.12.88-.37l5.25-5.25 5.25 5.25c.49.49 1.28.49 1.77 0l1.67-1.67c.49-.49.49-1.28 0-1.77L16.68 15l5.25-5.25c.25-.25.37-.56.37-.88V6.04h-2.83c-.32 0-.63.12-.88.37L13.34 11.66 8.09 6.41C7.85 6.16 7.53 5 6.92 5z"/></svg>';
+    const SVG_SHIELD = '<svg class="tile-hero-icon-svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>';
+    const SVG_LIGHTNING = '<svg class="tile-hero-icon-svg" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>';
+    const SVG_TARGET = '<svg class="tile-hero-icon-svg" viewBox="0 0 24 24"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>';
+    const SVG_CROWN = '<svg class="tile-hero-icon-svg" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>';
+
+    const MLBB_HEROES = [
+      { name: "Gusion - Holy Blade", iconSvg: SVG_SWORD },
+      { name: "Chou - Kung Fu Boy", iconSvg: SVG_SHIELD },
+      { name: "Lancelot - Blade Rose", iconSvg: SVG_SWORD },
+      { name: "Ling - Cyan Finch", iconSvg: SVG_LIGHTNING },
+      { name: "Fanny - Blade Dancer", iconSvg: SVG_LIGHTNING },
+      { name: "Lesley - Deadly Sniper", iconSvg: SVG_TARGET },
+      { name: "Hayabusa - Shadow Iga", iconSvg: SVG_SWORD },
+      { name: "Alucard - Demon Hunter", iconSvg: SVG_SWORD },
+      { name: "Layla - Energy Gunner", iconSvg: SVG_TARGET },
+      { name: "Miya - Moonlight Archer", iconSvg: SVG_TARGET },
+      { name: "Kagura - Onmyouji Master", iconSvg: SVG_CROWN },
+      { name: "Zilong - Dragon Spear", iconSvg: SVG_SWORD },
+      { name: "Franco - Frozen Warrior", iconSvg: SVG_SHIELD },
+      { name: "Tigreal - Warrior Dawn", iconSvg: SVG_SHIELD },
+      { name: "Eudora - Lightning Queen", iconSvg: SVG_LIGHTNING },
+      { name: "Saber - Swordmaster", iconSvg: SVG_SWORD },
+      { name: "Johnson - Mustang Auto", iconSvg: SVG_SHIELD },
+      { name: "Harley - Magic Genius", iconSvg: SVG_CROWN },
+      { name: "Aldous - Soul Contract", iconSvg: SVG_SHIELD },
+      { name: "Karina - Shadow Blade", iconSvg: SVG_SWORD },
+      { name: "Bruno - Fireball Striker", iconSvg: SVG_LIGHTNING },
+      { name: "Valir - Son of Flame", iconSvg: SVG_LIGHTNING },
+      { name: "Gord - Professor Mystic", iconSvg: SVG_CROWN },
+      { name: "Minsitthar - Royal Spear", iconSvg: SVG_SHIELD },
+      { name: "Paquito - Heavenly Fist", iconSvg: SVG_SHIELD }
+    ];
+
+    let userAnswers = new Array(25).fill(null);
+
+    function speakHebat() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance("hebat!!");
+        utterance.lang = "id-ID";
+        utterance.rate = 1.1;
+        utterance.pitch = 1.3;
+        window.speechSynthesis.speak(utterance);
+      }
+      playAudioBeep(600, 0.15, 'sine');
+    }
+
+    function speakSalah() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance("OPPPPSSS!!! teliti lagi!!");
+        utterance.lang = "id-ID";
+        utterance.rate = 1.1;
+        utterance.pitch = 0.8;
+        window.speechSynthesis.speak(utterance);
+      }
+      playAudioBeep(200, 0.3, 'sawtooth');
+    }
+
+    function playAudioBeep(freq, duration, type) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+        osc.stop(ctx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    const RAW_QUIZ_DATA = [
+      {
+        num: 1, timeLimit: 90,
+        text: "Pergeseran Tradisional ke Digital pada Transaksi Pasar\nDi Desa Sukamaju, sebagian besar warga dahulunya bertransaksi secara tatap muka di pasar tradisional menggunakan uang tunai. Namun, sejak tiga tahun terakhir, pedagang dan pembeli mulai terbiasa menggunakan pembayaran QRIS dan pemesanan barang via media sosial. Hal ini mengubah norma interaksi jual beli, kesepakatan harga, hingga kepercayaan antarwarga. Menurut Selo Soemardjan, perubahan sosial berfokus pada perubahan lembaga-lembaga kemasyarakatan yang memengaruhi sistem sosialnya.\n\nBerdasarkan wacana di atas, alasan utama fenomena transaksi digital tersebut dikategori sebagai perubahan sosial menurut pandangan Selo Soemardjan adalah …",
+        options: [
+          "Adanya pergantian jenis mata uang resmi negara",
+          "Terjadinya peningkatan pendapatan masyarakat desa secara merata",
+          "Berubahnya pola interaksi, norma transaksi, dan sistem sosial jual beli masyarakat",
+          "Berkurangnya jumlah pedagang fisik yang berjualan di pasar tradisional"
+        ],
+        answer: "Berubahnya pola interaksi, norma transaksi, dan sistem sosial jual beli masyarakat"
+      },
+      {
+        num: 2, timeLimit: 80,
+        text: "Tren Pola Komunikasi Masyarakat\nData memperlihatkan penurunan bertahap interaksi tatap muka langsung (dari 80% pada tahun 2010 menjadi 25% pada tahun 2024) seiring dengan peningkatan penggunaan gawai dan media sosial (dari 20% pada tahun 2010 menjadi 75% pada tahun 2024).\n\nBerdasarkan tren data di atas, fenomena ini mencerminkan hakikat perubahan sosial yaitu …",
+        options: [
+          "Perubahan sosial bersifat statis dan berulang dalam rentang waktu yang sama",
+          "Perubahan sosial terjadi secara serentak di seluruh wilayah tanpa terkecuali",
+          "Perubahan sosial pada suatu aspek (teknologi) mendorong perubahan pada aspek lain (pola interaksi)",
+          "Perubahan sosial selalu membawa dampak positif bagi keharmonisan keluarga"
+        ],
+        answer: "Perubahan sosial pada suatu aspek (teknologi) mendorong perubahan pada aspek lain (pola interaksi)"
+      },
+      {
+        num: 3, timeLimit: 75,
+        text: "Perbandingan Kasus Perubahan\nKasus 1: Pemerintah mengeluarkan kebijakan Kurikulum Merdeka yang mengubah struktur proses pembelajaran di seluruh sekolah se-Indonesia.\nKasus 2: Tren gaya rambut dan model pakaian Thrift impor meluas di kalangan remaja perkotaan.\n\nKlasifikasi bentuk perubahan sosial berdasarkan cakupannya untuk Kasus 1 dan Kasus 2 adalah …",
+        options: [
+          "Kasus 1: Perubahan Kecil; Kasus 2: Perubahan Besar",
+          "Kasus 1: Perubahan Besar; Kasus 2: Perubahan Kecil",
+          "Kedua kasus merupakan perubahan berskala besar",
+          "Kedua kasus merupakan perubahan berskala kecil"
+        ],
+        answer: "Kasus 1: Perubahan Besar; Kasus 2: Perubahan Kecil"
+      },
+      {
+        num: 4, timeLimit: 60,
+        text: "Alasan tren mode busana remaja (fashions) masuk dalam kategori Perubahan Kecil adalah …",
+        options: [
+          "Hanya memakan biaya yang murah",
+          "Berlangsung dalam waktu yang relatif sangat cepat",
+          "Tidak membawa pengaruh mendasar bagi lembaga dan struktur sosial masyarakat",
+          "Ditolak oleh kelompok orang tua dan tokoh adat"
+        ],
+        answer: "Tidak membawa pengaruh mendasar bagi lembaga dan struktur sosial masyarakat"
+      },
+      {
+        num: 5, timeLimit: 85,
+        text: "Fenomena Urbanisasi dan Kawasan Kumuh\nPembangunan pusat industri di wilayah perkotaan menarik minat jutaan warga desa untuk bertransmigrasi mencari pekerjaan. Namun, karena keterbatasan keterampilan dan ruang pemukiman, timbul area permukiman kumuh (slum area) di sepanjang bantaran sungai kota.\n\nBerdasarkan wacana di atas, kemunculan kawasan pemukiman kumuh merupakan contoh bentuk perubahan …",
+        options: [
+          "Planned change (Direncanakan)",
+          "Unplanned change (Tidak direncanakan)",
+          "Progress change (Kemajuan)",
+          "Evolusi struktural"
+        ],
+        answer: "Unplanned change (Tidak direncanakan)"
+      },
+      {
+        num: 6, timeLimit: 70,
+        text: "Bencana alam erupsi gunung berapi yang mengharuskan relokasi seluruh warga desa ke wilayah baru masuk ke dalam kombinasi bentuk perubahan …",
+        options: [
+          "Berlangsung lambat, direncanakan, dan berskala kecil",
+          "Berlangsung cepat, tidak direncanakan, dan berskala besar",
+          "Berlangsung cepat, direncanakan, dan bersifat regress",
+          "Berlangsung lambat, tidak direncanakan, dan bersifat progress"
+        ],
+        answer: "Berlangsung cepat, tidak direncanakan, dan berskala besar"
+      },
+      {
+        num: 7, timeLimit: 85,
+        text: "Kisah Dua Komunitas\nKomunitas A (Masyarakat Pesisir): Terbuka terhadap pendatang, rajin mengakses internet, serta aktif mengikuti pelatihan pengolahan hasil laut dari akademisi.\n\nKomunitas B (Masyarakat Pedalaman Suku Terasing): Memegang teguh tradisi leluhur, menutup diri dari jaringan komunikasi luar, dan menganggap hal-hal baru sebagai ancaman yang merusak alam.\n\nFaktor pendorong perubahan sosial yang paling menonjol pada Komunitas A adalah …",
+        options: [
+          "Keterikatan erat pada adat istiadat leluhur",
+          "Sikap terbuka terhadap karya orang lain dan kontak dengan budaya luar",
+          "Terisolasinya wilayah secara geografis",
+          "Homogenitas struktur mata pencaharian warga"
+        ],
+        answer: "Sikap terbuka terhadap karya orang lain dan kontak dengan budaya luar"
+      },
+      {
+        num: 8, timeLimit: 95,
+        text: "Maraknya Tren 'SPaylater' dan Gaya Hidup Berbelanja\nHasil survei lembaga riset sosial menunjukkan bahwa 65% remaja perkotaan menggunakan fitur pembayaran 'Paylater' dan pinjaman daring untuk membeli barang-barang seperti pakaian bermerek global, tiket konser, dan gawai keluaran terbaru. Sebagian besar dari mereka mengaku membeli barang tersebut agar dianggap 'gaul' dan diterima dalam kelompok pertemanannya, meskipun tidak sesuai dengan kemampuan finansial orang tua mereka.\n\nFenomena perilaku remaja pada wacana di atas merupakan bentuk nyata dari pergeseran nilai akibat modernisasi dan globalisasi, yaitu ...",
+        options: [
+          "Sekularisme, yaitu pemisahan antara norma agama dan urusan keduniaan dalam transaksi keuangan.",
+          "Konsumerisme dan Hedonisme, yaitu perilaku konsumsi berlebihan melebihi kebutuhan demi mengejar kepuasan prestise semata.",
+          "Westernisasi positif, yaitu penyerapan budaya hemat dan efektif dalam mengelola keuangan pribadi.",
+          "Modernisasi produktif, yaitu pemanfaatan sistem pembayaran modern untuk modal usaha kreatif remaja"
+        ],
+        answer: "Konsumerisme dan Hedonisme, yaitu perilaku konsumsi berlebihan melebihi kebutuhan demi mengejar kepuasan prestise semata."
+      },
+      {
+        num: 9, timeLimit: 80,
+        text: "Fenomena Globalisasi di Berbagai Bidang\n1. Remaja di Indonesia menggemari musik K-Pop dan menonton drama Korea melalui platform streaming.\n2. Penggunaan Bahasa Inggris sebagai bahasa pengantar dalam pertemuan tingkat tinggi PBB.\n3. Transaksi jual beli produk antarnegara menggunakan sistem pembayaran elektronik berbasis dompet digital (e-wallet).\n4. Penyebaran berita secara cepat dari satu belahan bumi ke belahan bumi lain melalui aplikasi media sosial.\n\nFenomena nomor (1) dan (4) berturut-turut merupakan contoh bentuk globalisasi di bidang …",
+        options: [
+          "Ekonomi dan Komunikasi",
+          "Budaya dan Komunikasi",
+          "Politik dan IPTEK",
+          "Budaya dan Transportasi"
+        ],
+        answer: "Budaya dan Komunikasi"
+      },
+      {
+        num: 10, timeLimit: 60,
+        text: "Proses meniru gaya hidup, cara berpakaian, dan tingkah laku masyarakat Barat secara mentah-mentah tanpa disaring terlebih dahulu dikategori sebagai …",
+        options: [
+          "Modernisasi",
+          "Westernisasi",
+          "Sekularisasi",
+          "Akulturasi"
+        ],
+        answer: "Westernisasi"
+      },
+      {
+        num: 11, timeLimit: 80,
+        text: "Individualisme vs Gotong Royong\nDi era digital, masyarakat perumahan perkotaan cenderung lebih mengenal rekan di media sosial daripada tetangga sebelah rumah. Hubungan silaturahmi tatap muka digantikan oleh pesan singkat. Kegiatan gotong royong membersihkan lingkungan pun makin jarang dilakukan dan digantikan oleh jasa petugas kebersihan berbayar.\n\nPergeseran nilai sosial yang terpapar pada artikel di atas menunjukkan peningkatan sikap …",
+        options: [
+          "Sosialis",
+          "Individualisme",
+          "Sekularisme",
+          "Chauvinisme"
+        ],
+        answer: "Individualisme"
+      },
+      {
+        num: 12, timeLimit: 70,
+        text: "Maraknya perundungan siber (cyberbullying), penipuan daring, dan penyebaran konten bermuatan melanggar susila di media sosial merupakan bentuk dampak negatif globalisasi berupa …",
+        options: [
+          "Demoralisasi (Kemerosotan Moral)",
+          "Disorganisasi Politik",
+          "Westernisasi Positif",
+          "Inovasi IPTEK Terarah"
+        ],
+        answer: "Demoralisasi (Kemerosotan Moral)"
+      },
+      {
+        num: 13, timeLimit: 70,
+        text: "Langkah nyata yang dapat dilakukan oleh peserta didik untuk melestarikan budaya lokal di tengah gempuran budaya pop global adalah …",
+        options: [
+          "Malu menggunakan bahasa daerah dalam percakapan sehari-hari",
+          "Mempelajari, mendokumentasikan, dan mempromosikan tarian serta makanan tradisional melalui media sosial",
+          "Menganggap seni tradisional sebagai warisan kuno yang tidak menarik",
+          "Melarang wisatawan asing mempelajari tarian daerah Indonesia"
+        ],
+        answer: "Mempelajari, mendokumentasikan, dan mempromosikan tarian serta makanan tradisional melalui media sosial"
+      },
+      {
+        num: 14, timeLimit: 85,
+        text: "Sikap Menghadapi Globalisasi\nSikap Chauvinistik: Menutup diri rapat-rapat dan menganggap budayanya paling unggul secara berlebihan.\nSikap Apatis: Membiarkan budaya luar mengikis budaya lokal tanpa peduli.\nSikap Selektif-Adaptif: Terbuka pada kemajuan IPTEK dan ekonomi global, namun tetap kritis menjaga kelestarian budaya serta kepribadian nasional.\n\nBerdasarkan data di atas, sikap yang paling rasional dan berwawasan masa depan dalam menghadapi globalisasi adalah …",
+        options: [
+          "Sikap Chauvinistik",
+          "Sikap Apatis",
+          "Sikap Selektif-Adaptif",
+          "Sikap Pasif-Konsumtif"
+        ],
+        answer: "Sikap Selektif-Adaptif"
+      },
+      {
+        num: 15, timeLimit: 95,
+        text: "Transformasi Pertanian Tradisional ke Pertanian Cerdas\nDi Desa Makmur, para petani dahulunya mengandalkan perkiraan cuaca tradisional dan tenaga hewan untuk membajak sawah. Sejak dua tahun terakhir, kelompok tani setempat mulai mengadopsi teknologi pengerjaan lahan berbasis mesin otomatis, aplikasi pemantau cuaca berbasis data satelit, serta sistem irigasi tetes otomatis. Perubahan ini meningkatkan hasil panen hingga dua kali lipat dan menghemat waktu kerja secara signifikan. Menurut Soerjono Soekanto, modernisasi adalah bentuk perubahan sosial yang terarah dan didasarkan pada perencanaan (planned change).\n\nBerdasarkan wacana di atas, alasan utama fenomena di Desa Makmur dikategori sebagai bentuk modernisasi adalah …",
+        options: [
+          "Terjadinya penggantian seluruh kebudayaan lokal dengan kebudayaan luar",
+          "Adanya pergeseran pola pikir ilmiah dan efisiensi kerja melalui penerapan teknologi terencana",
+          "Meningkatnya harga jual lahan pertanian di daerah pedesaan secara drastis",
+          "Hilangnya ikatan gotong royong antarpetani dalam kehidupan sehari-hari"
+        ],
+        answer: "Adanya pergeseran pola pikir ilmiah dan efisiensi kerja melalui penerapan teknologi terencana"
+      },
+      {
+        num: 16, timeLimit: 85,
+        text: "Otomatisasi Industri dan Disorganisasi Sosial\nSebuah pabrik tekstil besar mengadopsi mesin otomatis robotik untuk meningkatkan efisiensi dan jumlah produksi. Kebijakan ini berhasil menaikkan keuntungan perusahaan sebesar 40%. Akan tetapi, akibat otomatisasi tersebut, ratusan buruh terkena PHK, yang memicu lonjakan angka pengangguran dan peningkatan aksi pencurian di sekitar kawasan industri.\n\nBerdasarkan kasus di atas, dampak positif dan dampak negatif modernisasi industri berturut-turut adalah …",
+        options: [
+          "Peningkatan efisiensi produksi dan munculnya ketimpangan/masalah sosial baru",
+          "Penurunan kualitas barang dan kemakmuran buruh pabrik",
+          "Terjadinya demotivasi kerja dan penurunan pendapatan perusahaan",
+          "Hilangnya teknologi mesin dan penguatan ikatan kekeluargaan"
+        ],
+        answer: "Peningkatan efisiensi produksi dan munculnya ketimpangan/masalah sosial baru"
+      },
+      {
+        num: 17, timeLimit: 75,
+        text: "Pantun dan Tunjuk Ajar Melayu dalam Komunikasi\nMasyarakat Melayu Riau mengutamakan kesantunan berbicara. Komunikasi formal dan informal sering diselingi dengan pantun dan ungkapan klise. Ungkapan 'Yang tua dihormati, yang sebaya dikasihi, yang muda disayangi' menjadi pijakan etika pergaulan.\n\nFungsi utama penggunaan pantun dalam interaksi sosial masyarakat Melayu Riau adalah …",
+        options: [
+          "Menyampaikan sindiran atau nasihat secara halus tanpa menyinggung perasaan lawan tutur",
+          "Menunjukkan keunggulan status pendidikan pembicara",
+          "Memperlama durasi pembicaraan acara formal",
+          "Mengganti fungsi hukum tertulis di desa"
+        ],
+        answer: "Menyampaikan sindiran atau nasihat secara halus tanpa menyinggung perasaan lawan tutur"
+      },
+      {
+        num: 18, timeLimit: 65,
+        text: "Perilaku remaja saat ini yang sering bertutur kata kasar di media sosial bertentangan dengan kearifan lokal Melayu Riau yaitu …",
+        options: [
+          "Tunjuk Ajar kesantunan berbahasa dan etika tunjuk perasaan secara beradab",
+          "Aturan perdagangan ekspor-impor barang",
+          "Tradisi pengolahan lahan pertanian",
+          "Sistem pembagian hasil laut"
+        ],
+        answer: "Tunjuk Ajar kesantunan berbahasa dan etika tunjuk perasaan secara beradab"
+      },
+      {
+        num: 19, timeLimit: 80,
+        text: "Arsitektur Rumah Laksana & Rumah Lontiok\nRumah Adat Melayu Riau seperti Rumah Lontiok (Kabupaten Kampar) atau Rumah Panggung Selaso Jatuh Kembar memiliki struktur panggung berkolong tinggi, beratap curam, serta banyak ventilasi. Desain ini disesuaikan dengan kondisi iklim tropis basah dan daerah rawan banjir di sekitar sungai.\n\nBentuk rumah panggung berkolong tinggi pada arsitektur Melayu Riau merupakan bukti kearifan lokal dalam mengadaptasi kondisi geografi berupa …",
+        options: [
+          "Gempa bumi skala besar di lepas pantai",
+          "Ancaman banjir luapan sungai serta gangguan hewan buas di lingkungan basah",
+          "Angin topan yang melintas di dataran tinggi",
+          "Suhu udara dingin ekstrem di malam hari"
+        ],
+        answer: "Ancaman banjir luapan sungai serta gangguan hewan buas di lingkungan basah"
+      },
+      {
+        num: 20, timeLimit: 70,
+        text: "Tradisi Bakar Tongkang di Bagansiapiapi yang kini menjadi agenda pariwisata nasional dan internasional merupakan contoh bentuk …",
+        options: [
+          "Penghentian kegiatan kebudayaan lokal",
+          "Pemanfataan kearifan lokal dan sejarah sebagai potensi ekonomi kreatif serta pariwisata budaya",
+          "Penolakan terhadap kedatangan wisatawan asing",
+          "Bentuk kerusakan lingkungan akibat pembakaran kapal kayu"
+        ],
+        answer: "Pemanfataan kearifan lokal dan sejarah sebagai potensi ekonomi kreatif serta pariwisata budaya"
+      },
+      {
+        num: 21, timeLimit: 85,
+        text: "Kuliner Tradisional dan Ketahanan Pangan\nMakanan khas Melayu Riau seperti Gulai Ikan Patin, Asam Pedas Baung, Lempuk Durian, dan Sagu Riau memanfaatkan bahan baku lokal dari sungai dan kebun. Pemerintah provinsi kini mengampanyekan diversifikasi pangan berbasis sagu untuk mengurangi ketergantungan pada beras impor.\n\nManfaat kearifan lokal olahan Sagu Riau dalam mendukung ketahanan pangan nasional adalah …",
+        options: [
+          "Mengharuskan seluruh masyarakat berhenti mengonsumsi sayur",
+          "Menyediakan alternatif pangan lokal yang tahan iklim ekstrem dan mengurangi ketergantungan pada beras/terigu",
+          "Meningkatkan impor gandum dari negara luar",
+          "Mengubah lahan sagu menjadi pemukiman beton"
+        ],
+        answer: "Menyediakan alternatif pangan lokal yang tahan iklim ekstrem dan mengurangi ketergantungan pada beras/terigu"
+      },
+      {
+        num: 22, timeLimit: 75,
+        text: "Strategi Penguatan Identitas Budaya di Sekolah\nDi sekolah-sekolah Riau, diterapkan kebijakan penggunaan Busana Adat Melayu setiap hari Kamis, pengajaran Muatan Lokal (MuLok) Budaya Melayu Riau (BMR), serta ekstra kurikuler Musik Tanjak dan Tari Zapin.\n\nTujuan utama pengintegrasian Budaya Melayu Riau (BMR) ke dalam kurikulum sekolah adalah …",
+        options: [
+          "Menambah beban belajar peserta didik sebelum ujian nasional",
+          "Menanamkan karakter, kebanggaan, dan transmisi nilai kearifan lokal sejak dini kepada generasi muda",
+          "Menolak pembelajaran materi IPS dan sains modern",
+          "Menyiapkan siswa agar tidak bekerja di luar provinsi Riau"
+        ],
+        answer: "Menanamkan karakter, kebanggaan, dan transmisi nilai kearifan lokal sejak dini kepada generasi muda"
+      },
+      {
+        num: 23, timeLimit: 65,
+        text: "Sikap peserta didik yang mencerminkan pemaknaan positif terhadap pemakaian Tanjak (ikat kepala Melayu) adalah …",
+        options: [
+          "Menggunakan tanjak hanya untuk mengejek teman di kelas",
+          "Memakai tanjak dengan rasa bangga sebagai simbol kehormatan, marwah, dan kerapian berbusana",
+          "Merusak tanjak karena dianggap tidak sesuai dengan tren pakaian luar negeri",
+          "Membuang tanjak setelah selesai jam pelajaran di sekolah"
+        ],
+        answer: "Memakai tanjak dengan rasa bangga sebagai simbol kehormatan, marwah, dan kerapian berbusana"
+      },
+      {
+        num: 24, timeLimit: 75,
+        text: "Modal utama agar kearifan lokal Melayu Riau dapat bertahan dan menjadi penyaring (filter) di tengah gelombang globalisasi adalah …",
+        options: [
+          "Menutup seluruh akses komunikasi dan internet bagi warga Riau",
+          "Generasi muda yang cerdas, menguasai IPTEK modern, dan teguh memegang nilai-nilai Tunjuk Ajar Melayu serta Pancasila",
+          "Menjual seluruh kawasan hutan adat kepada investor swasta",
+          "Menganggap budaya luar selalu lebih mulia dibanding budaya sendiri"
+        ],
+        answer: "Generasi muda yang cerdas, menguasai IPTEK modern, dan teguh memegang nilai-nilai Tunjuk Ajar Melayu serta Pancasila"
+      },
+      {
+        num: 25, timeLimit: 75,
+        text: "Perbedaan mendasar antara Modernisasi dan Westernisasi yang paling tepat adalah …",
+        options: [
+          "Modernisasi mutlak menolak teknologi Barat, sedangkan Westernisasi menerima teknologi Barat",
+          "Modernisasi berorientasi pada peningkatan kualitas hidup melalui pola pikir rasional, sedangkan Westernisasi terbatas pada imitasi gaya hidup Barat",
+          "Modernisasi hanya terjadi di negara maju, sedangkan Westernisasi hanya di negara berkembang",
+          "Modernisasi mengikis kebudayaan lokal, sedangkan Westernisasi melestarikan kebudayaan lokal"
+        ],
+        answer: "Modernisasi berorientasi pada peningkatan kualitas hidup melalui pola pikir rasional, sedangkan Westernisasi terbatas pada imitasi gaya hidup Barat"
+      }
+    ];
+
+    function calculateRank(sc) {
+      if (sc <= 20) return "WARRIOR";
+      if (sc <= 40) return "ELITE";
+      if (sc <= 60) return "MASTER";
+      if (sc <= 75) return "GRANDMASTER";
+      if (sc <= 88) return "EPIC";
+      if (sc <= 96) return "LEGEND";
+      return "MYTHIC";
+    }
+
+    function renderTileGrid() {
+      const gridContainer = document.getElementById("grid-board");
+      gridContainer.innerHTML = "";
+
+      for (let i = 0; i < 25; i++) {
+        const box = document.createElement("div");
+        box.className = "tile-box";
+
+        if (userAnswers[i] === true) {
+          box.classList.add("answered-correct");
+        } else if (userAnswers[i] === false) {
+          box.classList.add("answered-wrong");
+        }
+
+        const inner = document.createElement("div");
+        inner.className = "tile-inner";
+
+        const front = document.createElement("div");
+        front.className = "tile-front";
+        
+        const heroData = MLBB_HEROES[i % MLBB_HEROES.length];
+        
+        const heroWrapper = document.createElement("div");
+        heroWrapper.innerHTML = heroData.iconSvg;
+
+        const numSpan = document.createElement("span");
+        numSpan.className = "tile-num-text";
+
+        if (userAnswers[i] === true) {
+          numSpan.innerText = (i + 1) + " OK";
+        } else if (userAnswers[i] === false) {
+          numSpan.innerText = i + 1;
+        } else {
+          numSpan.innerText = i + 1;
+        }
+
+        front.appendChild(heroWrapper.firstChild);
+        front.appendChild(numSpan);
+
+        inner.appendChild(front);
+        box.appendChild(inner);
+
+        box.onclick = () => clickOpenTile(i);
+        gridContainer.appendChild(box);
+      }
+    }
+
+    function clickOpenTile(index) {
+      if (userAnswers[index] !== null) return;
+
+      currentQuestionIdx = index;
+
+      const overlay = document.getElementById("tile-modal-overlay");
+      overlay.classList.add("active");
+
+      loadQuestion(index);
+    }
+
+    function closeTileModal() {
+      const overlay = document.getElementById("tile-modal-overlay");
+      overlay.classList.remove("active");
+    }
+
+    function loadQuestion(index) {
+      clearInterval(timerInterval);
+
+      const q = RAW_QUIZ_DATA[index];
+      const hero = MLBB_HEROES[index % MLBB_HEROES.length];
+
+      document.getElementById("q-hero-icon-container").innerHTML = hero.iconSvg;
+      document.getElementById("q-hero-name").innerText = hero.name;
+
+      document.getElementById("q-num-text").innerText = "SOAL UBIN #" + q.num + " / 25";
+      document.getElementById("q-body-text").innerText = q.text;
+
+      maxTimeForQ = q.timeLimit;
+      timeLeft = q.timeLimit;
+      updateTimerUI();
+
+      const optionsContainer = document.getElementById("options-list");
+      optionsContainer.innerHTML = "";
+
+      q.options.forEach((optText) => {
+        const optBtn = document.createElement("button");
+        optBtn.className = "option-3d-btn";
+        optBtn.innerText = optText;
+
+        optBtn.onclick = () => submitAnswer(optText, q.answer, optBtn);
+        optionsContainer.appendChild(optBtn);
+      });
+
+      startTimer();
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          handleTimeout();
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      document.getElementById("q-time-text").innerText = "⏱️ SISA WAKTU: " + timeLeft + " DETIK";
+      const pct = (timeLeft / maxTimeForQ) * 100;
+      document.getElementById("timer-bar").style.width = pct + "%";
+    }
+
+    function handleTimeout() {
+      if (currentQuestionIdx < 0 || userAnswers[currentQuestionIdx] !== null) return;
+      userAnswers[currentQuestionIdx] = false;
+      speakSalah();
+      document.getElementById("hero-speech").innerText = "OPPPPSSS!!! Waktu habis di Ubin #" + (currentQuestionIdx + 1) + "!! Teliti lagi!!";
+
+      renderTileGrid();
+
+      setTimeout(() => {
+        closeTileModal();
+        checkAllAnswered();
+      }, 1200);
+    }
+
+    function submitAnswer(selected, correct, element) {
+      clearInterval(timerInterval);
+
+      if (currentQuestionIdx < 0 || userAnswers[currentQuestionIdx] !== null) return;
+
+      if (selected === correct) {
+        userAnswers[currentQuestionIdx] = true;
+        score += 4;
+        element.classList.add("selected-correct");
+        speakHebat();
+        document.getElementById("hero-speech").innerText = "Jawaban Ubin #" + (currentQuestionIdx + 1) + " Tepat sekali! Hebat!! 🎉";
+      } else {
+        userAnswers[currentQuestionIdx] = false;
+        element.classList.add("selected-wrong");
+        speakSalah();
+        document.getElementById("hero-speech").innerText = "OPPPPSSS!!! Jawaban Ubin #" + (currentQuestionIdx + 1) + " Masih kurang tepat!! Teliti lagi!!";
+      }
+
+      document.getElementById("score-badge").innerText = "SKOR: " + score;
+      document.getElementById("rank-badge").innerText = calculateRank(score);
+
+      renderTileGrid();
+
+      setTimeout(() => {
+        closeTileModal();
+        checkAllAnswered();
+      }, 1200);
+    }
+
+    function checkAllAnswered() {
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      if (answeredCount === 25) {
+        endQuiz();
+      }
+    }
+
+    function startQuiz() {
+      const nameVal = document.getElementById("student-name").value.trim();
+      const classVal = document.getElementById("student-class").value.trim();
+
+      if (!nameVal || !classVal) {
+        alert("Harap isi Nama Lengkap dan Kelas terlebih dahulu!");
+        return;
+      }
+
+      studentName = nameVal;
+      studentClass = classVal;
+      document.getElementById("display-student").innerText = "Pemain: " + studentName + " (" + studentClass + ")";
+
+      document.getElementById("start-screen").style.display = "none";
+      document.getElementById("top-header").style.display = "flex";
+      document.getElementById("game-container").style.display = "flex";
+
+      isQuizActive = true;
+      renderTileGrid();
+    }
+
+    function endQuiz() {
+      isQuizActive = false;
+      clearInterval(timerInterval);
+
+      document.getElementById("game-container").style.display = "none";
+      document.getElementById("result-screen").style.display = "flex";
+
+      document.getElementById("final-score").innerText = score + " / 100";
+      document.getElementById("final-rank").innerText = "RANK: " + calculateRank(score);
+
+      if (score >= 70 && typeof confetti === 'function') {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+
+      saveScoreToGoogleSheet();
+    }
+
+    function saveScoreToGoogleSheet() {
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("URL_WEB_APP")) {
+        document.getElementById("save-status").innerText = "⚠️ Nilai belum terhubung ke Google Script URL.";
+        return;
+      }
+
+      const payload = {
+        nama: studentName,
+        kelas: studentClass,
+        skor: score,
+        rank: calculateRank(score),
+        tanggal: new Date().toLocaleString("id-ID")
+      };
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        document.getElementById("save-status").innerText = "✅ Nilai berhasil disimpan ke Rekap Guru!";
+      }).catch(() => {
+        document.getElementById("save-status").innerText = "⚠️ Gagal menyimpan nilai. Periksa jaringan internet.";
+      });
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && isQuizActive) {
+        cheatWarnings++;
+        if (cheatWarnings === 1) {
+          document.getElementById("cheat-modal").style.display = "flex";
+        } else if (cheatWarnings >= 2) {
+          score = 0;
+          alert("DISHONEST DETECTED! Anda didiskualifikasi karena berulangkali berpindah tab/aplikasi.");
+          endQuiz();
+        }
+      }
+    });
+
+    function closeCheatModal() {
+      document.getElementById("cheat-modal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
